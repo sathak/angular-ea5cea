@@ -1,0 +1,133 @@
+<div>
+  <div class="grid">
+    <div id="quiz" *ngIf="!showResult">
+      <h1 class="header">Question</h1>
+      <hr style="margin-bottom: 20px" />
+      <!-- loading layout replaced by app after startupp -->
+      <div class="app-loading" *ngIf="showLoader">
+        <div class="logo"></div>
+        <svg class="spinner" viewBox="25 25 50 50">
+          <circle
+            class="path"
+            cx="50"
+            cy="50"
+            r="20"
+            fill="none"
+            stroke-width="2"
+            stroke-miterlimit="10"
+          />
+        </svg>
+      </div>
+      <div *ngFor="let item of data; index as i" class="col-md-12">
+        <div *ngIf="item.active">
+          <p id="question" class="question">{{ currentQn }}. {{ item.key }}</p>
+          <div
+            align="center"
+            class="col-md-12"
+            *ngIf="item.control == 'select'"
+          >
+            <span
+              class="buttons col-md-6"
+              *ngFor="let option of item.options; index as ai"
+            >
+              <a
+                [ngClass]="
+                  item.selectedIndex != undefined && item.selectedIndex == ai
+                    ? 'buttonSelected'
+                    : 'button'
+                "
+                (click)="onAnswerClick(item, option, data, ai)"
+                >{{ option }}</a
+              >
+            </span>
+          </div>
+          <div align="center" class="col-md-12" *ngIf="item.control == 'multi'">
+            <span
+              class="buttons col-md-6"
+              *ngFor="let option of item.options; index as ai"
+            >
+              <input
+                type="checkbox"
+                (click)="onAnswerClick(item, option, data, ai)"
+              />{{ option }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="divSubmit">
+        <a
+          class="buttonGrey"
+          *ngIf="currentQn > 1 && currentQn <= data.length"
+          (click)="onPrevClick(currentQn, data)"
+          >Previous</a
+        >
+        <a
+          class="buttonGrey"
+          *ngIf="currentQn < data.length"
+          (click)="onNextClick(currentQn, data)"
+          >Next</a
+        >
+        <a
+          class="buttonGrey"
+          *ngIf="currentQn == data.length"
+          (click)="onSubmitClick(data)"
+          >Submit</a
+        >
+      </div>
+      <div>
+        <hr style="margin-top: 50px" />
+        <footer>
+          <p id="progress">Question {{ currentQn }} of {{ data.length }}</p>
+        </footer>
+      </div>
+      <div></div>
+    </div>
+    <div *ngIf="showResult">
+      <h1 class="header">Result</h1>
+      <hr style="margin-bottom: 20px" />
+      <div class="result">
+        <strong>Your Score : {{ score }}</strong>
+        <br />
+
+        <a class="button" routerLink="/">Home <i class="fa fa-home"></i></a>
+      </div>
+      <div *ngFor="let item of data; index as i" class="col-md-12">
+        <p id="question" class="question">{{ i + 1 }}. {{ item.key }}</p>
+        <div align="center" class="col-md-12" *ngIf="item.control == 'select'">
+          <span
+            class="buttons col-md-6"
+            *ngFor="let option of item.options; index as ai"
+          >
+            <span
+              [ngClass]="
+                item.selectedIndex != undefined &&
+                item.selectedIndex == ai &&
+                item.selectedans == item.ans
+                  ? 'buttonSelected'
+                  : item.selectedIndex != undefined &&
+                    item.selectedans != item.ans &&
+                    item.selectedIndex == ai
+                  ? 'buttonWrong'
+                  : 'button'
+              "
+              >{{ option }}</span
+            >
+          </span>
+        </div>
+        <div align="center" class="col-md-12" *ngIf="item.control == 'multi'">
+          <span
+            class="buttons col-md-6"
+            *ngFor="let option of item.options; index as ai"
+          >
+            <input
+              type="checkbox"
+              (click)="onAnswerClick(item, option, data, ai)"
+              [checked]="item.selectedIndex.indexOf(ai) > -1"
+              disabled
+            />{{ option }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
